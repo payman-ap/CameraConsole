@@ -41,6 +41,13 @@ private:
     QTimer* poll_timer_;
 
     QButtonGroup* filter_group_;
+
+
+    // ── Display-side FPS ────────────────────────
+    int    display_frame_count_{0};
+    double display_fps_{0.0};
+    std::chrono::steady_clock::time_point display_last_time_;
+    // ── Stats snapshot for reset ────────────────
     uint64_t raw_drop_baseline_{0};
     uint64_t proc_drop_baseline_{0};
 

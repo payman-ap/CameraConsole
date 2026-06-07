@@ -72,9 +72,11 @@ MainWindow::MainWindow(QWidget *parent)
 
     startPipeline();
 
+    display_last_time_ = std::chrono::steady_clock::now();
 
 
 
+    state_.control.pipeline_ready = true;
 }
 
 
@@ -120,8 +122,6 @@ void MainWindow::startPipeline()
 
     poll_timer_->start(16); // giving roughly 60 GUI updates per second. 1000 / 60 ≈ 16 ms
 
-    state_.control.pipeline_ready = true;
-
     std::cout << "Pipeline started\n" << std::endl;
 
 }
@@ -149,13 +149,44 @@ void MainWindow::onPollFrame()
 {
     FramePacket packet;
     if(state_.processed_frame_queue.size()==0) return; // try getting data
-    if(!state_.processed_frame_queue.pop(packet)) return;
+    if(!state_.processed_frame_queue.pop(packet)) {
+        poll_timer_->stop();
+        return;
+    }
 
+    auto now = std::chrono::steady_clock::now();
+
+    // Display-side FPS
+    if (++display_frame_count_ % 30 == 0) {
+        std::chrono::duration<double> dt = now - display_last_time_;
+        display_fps_ = 30.0 / dt.count();
+        display_last_time_ = now;
+        display_frame_count_ = 0;
+    }
+    // Update FPS labels
+    ui->lblCaptureFps->setText(
+        QString::number(static_cast<int>(state_.capture_fps.load()))
+    );
+    ui->lblDisplayFps->setText(
+        QString::number(static_cast<int>(display_fps_))
+    );
+
+
+    // // Latency
+    // int64_t latency_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+    //                          now - packet.capture_time).count();
+
+    // // Queue depth
+    // state_.current_queue_depth = state_.processed_frame_queue.size();
+
+
+
+
+
+    // Render frame
     if(packet.image.empty()) return; // empty frame check
     QPixmap pix = matToPixmap(packet.image); // convert
-
     QPixmap scaled_pix = pix.scaled(ui->feedLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation); // scale to qt
-
     ui->feedLabel->setPixmap(scaled_pix); // display in the label
 }
 
