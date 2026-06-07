@@ -5,6 +5,7 @@ SharedState shared_state;
 
 void capture_thread(cv::VideoCapture& cap, SharedState& state)
 {
+    std::cout << "Capture started\n" << std::endl;
     while (state.control.running && !state.control.pipeline_ready) {
         std::this_thread::sleep_for(std::chrono::milliseconds(5));
     }
@@ -47,6 +48,7 @@ void capture_thread(cv::VideoCapture& cap, SharedState& state)
 
 void processing_thread(SharedState& state)
 {
+    std::cout << "Processing started\n" << std::endl;
     FramePacket packet;
     cv::Mat frame_processed;
 
