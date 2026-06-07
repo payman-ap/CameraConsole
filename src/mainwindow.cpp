@@ -1,6 +1,36 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
+#include <QPixmap>
+#include <QFont>
+
+
+
+
+QPixmap matToPixmap(const cv::Mat& mat)
+{
+    cv::Mat rgb;
+
+    cv::cvtColor(
+        mat,
+        rgb,
+        cv::COLOR_BGR2RGB
+        );
+    QImage img(
+        rgb.data,
+        rgb.cols,
+        rgb.rows,
+        rgb.step,
+        QImage::Format_RGB888
+        );
+    return QPixmap::fromImage(
+        img.copy()
+        ); //return copy Because QImage points to rgb.data
+    // which disappears when the function exits, .copy() allocates Qt's own storage.
+}
+
+
+
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -93,6 +123,18 @@ void MainWindow::stopPipeline()
 
 void MainWindow::onPollFrame()
 {
+    FramePacket packet;
+    if(state_.processed_frame_queue.size()==0) return; // try getting data
+    if(!state_.processed_frame_queue.pop(packet)) return;
+
+    if(packet.image.empty()) return; // empty frame check
+    QPixmap pix = matToPixmap(packet.image); // convert
+
+    QPixmap scaled_pix = pix.scaled(ui->feedLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation); // scale to qt
+
+    ui->feedLabel->setPixmap(scaled_pix); // display in the label
+
+
 
 }
 
