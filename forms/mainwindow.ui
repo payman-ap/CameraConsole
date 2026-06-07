@@ -175,7 +175,7 @@ QGroupBox::title
 }</string>
          </property>
          <property name="text">
-          <string>Latency:</string>
+          <string>Latency (ms):</string>
          </property>
         </widget>
        </item>
@@ -201,7 +201,7 @@ QGroupBox::title
 }</string>
          </property>
          <property name="text">
-          <string>labQueue Depth:</string>
+          <string>Queue Depth:</string>
          </property>
         </widget>
        </item>

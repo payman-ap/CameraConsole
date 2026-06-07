@@ -171,15 +171,26 @@ void MainWindow::onPollFrame()
         QString::number(static_cast<int>(display_fps_))
     );
 
+    // Latency
+    int64_t latency_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+                             now - packet.capture_time).count();
+    ui->lblLatency->setText(
+        QString::number(latency_ms)
+    );
 
-    // // Latency
-    // int64_t latency_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
-    //                          now - packet.capture_time).count();
+    // Queue depth
+    state_.current_queue_depth = state_.processed_frame_queue.size();
+    ui->lblQueueDepth->setText(
+        QString::number(state_.current_queue_depth.load())
+    );
 
-    // // Queue depth
-    // state_.current_queue_depth = state_.processed_frame_queue.size();
+    // Raw Drop counter
+    uint64_t raw_drops  = state_.raw_frame_queue .dropped_frames() - raw_drop_baseline_;
+    ui->lblRawDrops->setText(QString::number(raw_drops));
 
-
+    // Proc Drop counter
+    uint64_t proc_drops = state_.processed_frame_queue.dropped_frames() - proc_drop_baseline_;
+    ui->lblProcDrops->setText(QString::number(proc_drops));
 
 
 
@@ -215,7 +226,11 @@ void MainWindow::onFilterChanged(int id)
 
 void MainWindow::onResetStats()
 {
-    std::cout << "Reset button pushed" << std::endl;
+    raw_drop_baseline_= state_.raw_frame_queue.dropped_frames();
+    proc_drop_baseline_ = state_.processed_frame_queue.dropped_frames();
+    display_fps_ = 0.0;
+    display_frame_count_ = 0;
+    display_last_time_ = std::chrono::steady_clock::now();
 }
 
 
