@@ -81,6 +81,24 @@ public:
         return true;
     }
 
+    bool try_pop(T& frame)
+    {
+        std::lock_guard<std::mutex> lock(mutex_);
+
+        if(frames_.empty())
+        {
+            return false;
+        }
+
+        frame = frames_.front();
+
+        frames_.pop();
+
+        cv_produce_.notify_one();
+
+        return true;
+    }
+
     void notify_shutdown()
     {
         std::lock_guard<std::mutex> lock(mutex_);

@@ -28,6 +28,11 @@ public:
     ~MainWindow() override;
 
 private:
+    void setupUI();
+    void setupButtons();
+    void setupTimer();
+    void setupFilterGroup();
+    void setupStats();
     void startPipeline();
     void stopPipeline();
 

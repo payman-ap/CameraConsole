@@ -25,25 +25,39 @@ QPixmap matToPixmap(const cv::Mat& mat)
 }
 
 
-
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
 
-    filter_group_ = new QButtonGroup(this);
-    filter_group_->addButton(ui->rbNone, 0);
-    filter_group_->addButton(ui->rbGray, 1);
-    filter_group_->addButton(ui->rbBlur, 2);
-    filter_group_->addButton(ui->rbEdge, 3);
+    setupUI();
 
+    setupFilterGroup();
+
+    setupButtons();
+
+    setupTimer();
+
+    setupStats();
+
+    display_last_time_ = std::chrono::steady_clock::now();
+
+    startPipeline();
+}
+
+void MainWindow::setupUI()
+{
+
+}
+void MainWindow::setupButtons()
+{
     connect(
         filter_group_,
         &QButtonGroup::idClicked,
         this,
         &MainWindow::onFilterChanged
-    );
+        );
 
     connect(
         ui->btnExit,
@@ -58,9 +72,9 @@ MainWindow::MainWindow(QWidget *parent)
         this,
         &MainWindow::onResetStats
         );
-
-
-
+}
+void MainWindow::setupTimer()
+{
     // --- Create QTimer -----------------------
     poll_timer_ = new QTimer(this); // The "this" makes MainWindow the parent. ownership model will automatically destroy the timer when the window is destroyed
     connect(
@@ -68,27 +82,35 @@ MainWindow::MainWindow(QWidget *parent)
         &QTimer::timeout,
         this,
         &MainWindow::onPollFrame
-    );
-
-    startPipeline();
-
-    display_last_time_ = std::chrono::steady_clock::now();
-
-
-
-    state_.control.pipeline_ready = true;
+        );
 }
 
+void MainWindow::setupFilterGroup()
+{
+    filter_group_ = new QButtonGroup(this);
+    filter_group_->addButton(ui->rbNone, 0);
+    filter_group_->addButton(ui->rbGray, 1);
+    filter_group_->addButton(ui->rbBlur, 2);
+    filter_group_->addButton(ui->rbEdge, 3);
+}
+void MainWindow::setupStats()
+{
 
+}
 
 void MainWindow::startPipeline()
 {
     // --- Camera init -----------------------
-    int deviceID = 1;
-    int apiID = cv::CAP_V4L2;
+    constexpr int deviceID = 1;
+    constexpr int apiID = cv::CAP_V4L2;
     cap_.open(deviceID, apiID);
+    if(!cap_.isOpened())
+    {
+        cap_.open(0, apiID); // check diffult cam connection
+    }
     if (!cap_.isOpened()) {
         ui->feedLabel->setText("Camera not found");
+        return;
     }
     else
     {
@@ -107,28 +129,19 @@ void MainWindow::startPipeline()
         720
         );
 
-    capture_worker_ =
-        std::thread(
-            capture_thread,
-            std::ref(cap_),
-            std::ref(state_)
-            );
-
-    processing_worker_ =
-        std::thread(
-            processing_thread,
-            std::ref(state_)
-            );
+    capture_worker_ = std::thread(capture_thread, std::ref(cap_), std::ref(state_));
+    processing_worker_ = std::thread(processing_thread, std::ref(state_));
 
     poll_timer_->start(16); // giving roughly 60 GUI updates per second. 1000 / 60 ≈ 16 ms
 
+    state_.control.pipeline_ready = true;
     std::cout << "Pipeline started\n" << std::endl;
 
 }
 
 void MainWindow::stopPipeline()
 {
-    poll_timer_->stop();
+    if(poll_timer_) poll_timer_->stop();
     state_.control.running = false;
     // Wake queues:
     state_.raw_frame_queue.notify_shutdown();
@@ -147,10 +160,15 @@ void MainWindow::stopPipeline()
 
 void MainWindow::onPollFrame()
 {
+    // FramePacket packet;
+    // if(state_.processed_frame_queue.size()==0) return; // try getting data
+    // if(!state_.processed_frame_queue.pop(packet)) {
+    //     poll_timer_->stop();
+    //     return;
+    // }
     FramePacket packet;
-    if(state_.processed_frame_queue.size()==0) return; // try getting data
-    if(!state_.processed_frame_queue.pop(packet)) {
-        poll_timer_->stop();
+    if(!state_.processed_frame_queue.try_pop(packet))
+    {
         return;
     }
 
@@ -195,7 +213,9 @@ void MainWindow::onPollFrame()
 
 
     // Render frame
-    if(packet.image.empty()) return; // empty frame check
+    if(packet.image.empty()){
+        return; // empty frame check
+    }
     QPixmap pix = matToPixmap(packet.image); // convert
     QPixmap scaled_pix = pix.scaled(ui->feedLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation); // scale to qt
     ui->feedLabel->setPixmap(scaled_pix); // display in the label
@@ -220,6 +240,8 @@ void MainWindow::onFilterChanged(int id)
 
     case 3:
         state_.control.filter_type = FilterType::edge;
+        break;
+    default:
         break;
     }
 }
