@@ -5,6 +5,14 @@ find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
 
 qt_standard_project_setup()
 
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_AUTOUIC_SEARCH_PATHS
+    ${CMAKE_CURRENT_SOURCE_DIR}/forms
+)
+
 qt_add_executable(intercom
     WIN32 MACOSX_BUNDLE
     src/main.cpp
@@ -14,7 +22,8 @@ qt_add_executable(intercom
 )
 
 target_include_directories(intercom PRIVATE
-    include)
+    include
+    ${CMAKE_CURRENT_BINARY_DIR})
 
 target_link_libraries(intercom
     PRIVATE
