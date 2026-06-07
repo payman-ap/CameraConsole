@@ -334,10 +334,13 @@ QRadioButton::indicator:checked
            <property name="text">
             <string>None</string>
            </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
           </widget>
          </item>
          <item>
-          <widget class="QRadioButton" name="tbGray">
+          <widget class="QRadioButton" name="rbGray">
            <property name="styleSheet">
             <string notr="true">QRadioButton
 {

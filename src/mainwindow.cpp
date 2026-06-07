@@ -1,11 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QPixmap>
-#include <QFont>
-
-
-
 
 QPixmap matToPixmap(const cv::Mat& mat)
 {
@@ -36,6 +31,35 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    filter_group_ = new QButtonGroup(this);
+    filter_group_->addButton(ui->rbNone, 0);
+    filter_group_->addButton(ui->rbGray, 1);
+    filter_group_->addButton(ui->rbBlur, 2);
+    filter_group_->addButton(ui->rbEdge, 3);
+
+    connect(
+        filter_group_,
+        &QButtonGroup::idClicked,
+        this,
+        &MainWindow::onFilterChanged
+    );
+
+    connect(
+        ui->btnExit,
+        &QPushButton::clicked,
+        this,
+        &MainWindow::close
+        );
+
+    connect(
+        ui->btnReset,
+        &QPushButton::clicked,
+        this,
+        &MainWindow::onResetStats
+        );
+
+
 
     // --- Create QTimer -----------------------
     poll_timer_ = new QTimer(this); // The "this" makes MainWindow the parent. ownership model will automatically destroy the timer when the window is destroyed
@@ -133,9 +157,34 @@ void MainWindow::onPollFrame()
     QPixmap scaled_pix = pix.scaled(ui->feedLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation); // scale to qt
 
     ui->feedLabel->setPixmap(scaled_pix); // display in the label
+}
 
 
+void MainWindow::onFilterChanged(int id)
+{
+    switch(id)
+    {
+    case 0:
+        state_.control.filter_type = FilterType::none;
+        break;
 
+    case 1:
+        state_.control.filter_type = FilterType::grayscale;
+        break;
+
+    case 2:
+        state_.control.filter_type = FilterType::blur;
+        break;
+
+    case 3:
+        state_.control.filter_type = FilterType::edge;
+        break;
+    }
+}
+
+void MainWindow::onResetStats()
+{
+    std::cout << "Reset button pushed" << std::endl;
 }
 
 

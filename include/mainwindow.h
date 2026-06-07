@@ -2,7 +2,12 @@
 #define MAINWINDOW_H
 
 #include <thread>
+
 #include <QTimer>
+#include <QPixmap>
+#include <QFont>
+#include <QButtonGroup>
+
 #include <opencv2/videoio.hpp>
 #include "camera_pipeline.h"
 
@@ -35,12 +40,16 @@ private:
 
     QTimer* poll_timer_;
 
+    QButtonGroup* filter_group_;
+    uint64_t raw_drop_baseline_{0};
+    uint64_t proc_drop_baseline_{0};
+
     Ui::MainWindow *ui;
 
 private slots:
     void onPollFrame();
-    // void onFilterChanged();
-    // void onResetStats();
+    void onFilterChanged(int id);
+    void onResetStats();
 };
 
 
