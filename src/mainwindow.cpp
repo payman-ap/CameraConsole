@@ -1,5 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include <cmath>
+#include <algorithm>
 
 
 QPixmap matToPixmap(const cv::Mat& mat)
@@ -101,6 +103,10 @@ void MainWindow::setupButtons()
         this,
         &MainWindow::onAudioGainChanged
         );
+
+    ui->lblSliderAudioGain->setMinimumWidth(120);
+    ui->lblSliderAudioGain->setMaximumWidth(150);
+    onAudioGainChanged(ui->sliderAudioGain->value());
 }
 void MainWindow::setupTimer()
 {
@@ -205,6 +211,7 @@ void MainWindow::stopAudioPipeline()
     if (audio_pipeline_.control().running)
     {
         audio_pipeline_.stop();
+        resetAudioMeters();
     }
 }
 
@@ -216,6 +223,19 @@ void MainWindow::onPollFrame()
     //     poll_timer_->stop();
     //     return;
     // }
+    // Update real audio meters or reset them if pipeline is stopped
+    if (audio_pipeline_.control().running.load(std::memory_order_relaxed))
+    {
+        updateAudioMeters(
+            audio_pipeline_.control().level_left.load(std::memory_order_relaxed),
+            audio_pipeline_.control().level_right.load(std::memory_order_relaxed)
+        );
+    }
+    else
+    {
+        resetAudioMeters();
+    }
+
     FramePacket packet;
     if(!state_.processed_frame_queue.try_pop(packet))
     {
@@ -254,25 +274,6 @@ void MainWindow::onPollFrame()
     QPixmap pix = matToPixmap(packet.image); // convert
     QPixmap scaled_pix = pix.scaled(ui->feedLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation); // scale to qt
     ui->feedLabel->setPixmap(scaled_pix); // display in the label
-
-
-    // Test audio meter fake
-    static int level = 0;
-    static bool up = true;
-    if(up)
-    {
-        level += 2;
-        if(level >= 100)
-            up = false;
-    }
-    else
-    {
-        level -= 2;
-        if(level <= 0)
-            up = true;
-    }
-    ui->audioLevelLeft->setValue(level);
-    ui->audioLevelRight->setValue(100 - level);
 }
 
 
@@ -308,6 +309,25 @@ void MainWindow::onResetStats()
     display_frame_count_ = 0;
     display_last_time_ = std::chrono::steady_clock::now();
 }
+
+void MainWindow::updateAudioMeters(
+    int left,
+    int right
+    )
+{
+    left = std::clamp(left, 0, 100);
+    right = std::clamp(right, 0, 100);
+
+    ui->audioLevelLeft->setValue(left);
+    ui->audioLevelRight->setValue(right);
+}
+
+void MainWindow::resetAudioMeters()
+{
+    ui->audioLevelLeft->setValue(0);
+    ui->audioLevelRight->setValue(0);
+}
+
 
 void MainWindow::onVideoStartStop()
 {
@@ -432,8 +452,18 @@ void MainWindow::onAudioMute()
 
 void MainWindow::onAudioGainChanged(int value)
 {
-    // ui->lblSliderAudioGain->setText(QString::number(value));
     audio_pipeline_.control().gain_percent = value;
+    
+    QString dbStr;
+    if (value == 0) {
+        dbStr = "-inf dB";
+    } else {
+        double db = 20.0 * std::log10(value / 100.0);
+        dbStr = QString::asprintf("%.1f dB", db);
+    }
+    
+    ui->lblSliderAudioGain->setText(QString("%1% (%2)").arg(value).arg(dbStr));
+
     qDebug()
         << "Gain:"
         << audio_pipeline_.control().gain_percent.load();
@@ -442,6 +472,31 @@ void MainWindow::onAudioGainChanged(int value)
 
 
 
+
+void MainWindow::onMicDevChanged(const QString &text)
+{
+    Q_UNUSED(text);
+}
+
+void MainWindow::onLoopbackChanged(int value)
+{
+    Q_UNUSED(value);
+}
+
+void MainWindow::onAecChanged(int value)
+{
+    Q_UNUSED(value);
+}
+
+void MainWindow::onNsChanged(int value)
+{
+    Q_UNUSED(value);
+}
+
+void MainWindow::onAgcChanged(int value)
+{
+    Q_UNUSED(value);
+}
 
 MainWindow::~MainWindow()
 {

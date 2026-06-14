@@ -9,6 +9,8 @@ struct AudioControl
     std::atomic<bool> running{false};
     std::atomic<bool> muted{false};
     std::atomic<int> gain_percent{50};
+    std::atomic<int> level_left{0};
+    std::atomic<int> level_right{0};
 };
 
 #include "audio_recorder.hpp"

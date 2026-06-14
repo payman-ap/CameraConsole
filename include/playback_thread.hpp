@@ -118,6 +118,26 @@ private:
                 }
             }
 
+            // Calculate peak level (0..100)
+            int16_t max_val = 0;
+            for (int16_t sample : chunk) {
+                int16_t abs_val = std::abs(sample);
+                if (abs_val > max_val) {
+                    max_val = abs_val;
+                }
+            }
+            int level_percent = static_cast<int>((static_cast<double>(max_val) / 32768.0) * 100.0);
+
+            // Apply VU decay filter (at most 5% drop per chunk for smooth visual falloff)
+            if (level_percent < last_level_) {
+                level_percent = std::max(level_percent, last_level_ - 5);
+            }
+            last_level_ = level_percent;
+
+            // Store in atomic levels
+            control_.level_left.store(level_percent, std::memory_order_relaxed);
+            control_.level_right.store(level_percent, std::memory_order_relaxed);
+
             // playFrames returns false on EPIPE — that is a real ALSA underrun.
             if (!player_.playFrames(chunk, chunk_frames)) {
                 ++alsa_underruns_;
@@ -139,4 +159,5 @@ private:
     std::atomic<int>   alsa_underruns_;   // real EPIPE events  (audible glitches)
 
     std::thread          thread_;
+    int                  last_level_ = 0;
 };

@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <thread>
-
+#include <algorithm>
 #include <QTimer>
 #include <QPixmap>
 #include <QFont>
@@ -74,9 +74,9 @@ private:
     // Audio members
     AudioPipeline audio_pipeline_;
 
-
-
-    // ── Audio members
+    // ── Audio meters
+    void updateAudioMeters(int left, int right);
+    void resetAudioMeters();
 
 private slots:
     void onPollFrame();
@@ -86,7 +86,14 @@ private slots:
     void onAudioStartStop();
     void onAudioMute();
     void onAudioGainChanged(int value);
-};
 
+
+    // ================= Audio slots =================
+    void onMicDevChanged(const QString &text);
+    void onLoopbackChanged(int value);    // 0..100
+    void onAecChanged(int value);         // 0..100
+    void onNsChanged(int value);          // 0..100
+    void onAgcChanged(int value);         // 0..100
+};
 
 #endif // MAINWINDOW_H
