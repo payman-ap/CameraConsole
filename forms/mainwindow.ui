@@ -34,7 +34,7 @@ QWidget
    <property name="layoutDirection">
     <enum>Qt::LayoutDirection::LeftToRight</enum>
    </property>
-   <layout class="QVBoxLayout" name="verticalLayout" stretch="10,1,1">
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QLabel" name="feedLabel">
       <property name="sizePolicy">
@@ -69,15 +69,40 @@ QWidget
      </widget>
     </item>
     <item>
-     <widget class="QGroupBox" name="statsGroup">
-      <property name="minimumSize">
-       <size>
-        <width>0</width>
-        <height>70</height>
-       </size>
-      </property>
+     <widget class="QGroupBox" name="videoGroup">
       <property name="styleSheet">
        <string notr="true">QGroupBox
+{
+    color: #4b5563;       /* This sets the title text color to gray */
+    border: 1px solid #2a2d32;  /* Match your dark borders */
+    border-radius: 4px;
+    margin-top: 8px;      /* Shrinks the awkward top spacing */
+    padding: 6px;
+}
+
+QGroupBox::title
+{
+    subcontrol-origin: margin;
+    left: 8px;            /* Aligns text beautifully to the top left */
+}</string>
+      </property>
+      <property name="title">
+       <string>Video</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_8">
+       <item>
+        <widget class="QGroupBox" name="videoStatsGroup">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>70</height>
+          </size>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">QGroupBox
 {
     color: #4b5563;
     border: 1px solid #2a2d32;
@@ -91,47 +116,451 @@ QGroupBox::title
     subcontrol-origin: margin;
     left: 8px;
 }</string>
+         </property>
+         <property name="title">
+          <string>Video Stats</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_3">
+          <item>
+           <widget class="QLabel" name="lblVideoDeviceName">
+            <property name="styleSheet">
+             <string notr="true">QLabel
+{
+    color: #cbd5e1;
+}</string>
+            </property>
+            <property name="text">
+             <string>No Camera</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelDisplay">
+            <property name="styleSheet">
+             <string notr="true">QLabel
+{
+    color: #cbd5e1;
+}</string>
+            </property>
+            <property name="text">
+             <string>Display FPS:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblDisplayFps">
+            <property name="styleSheet">
+             <string notr="true">QLabel
+{
+    color: #cbd5e1;
+}</string>
+            </property>
+            <property name="text">
+             <string>--</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelCapture">
+            <property name="styleSheet">
+             <string notr="true">QLabel
+{
+    color: #cbd5e1;
+}</string>
+            </property>
+            <property name="text">
+             <string>Capture FPS:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelVideoDevice">
+            <property name="styleSheet">
+             <string notr="true">QLabel
+{
+    color: #cbd5e1;
+}</string>
+            </property>
+            <property name="text">
+             <string>Device:</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblCaptureFps">
+            <property name="styleSheet">
+             <string notr="true">QLabel
+{
+    color: #cbd5e1;
+}</string>
+            </property>
+            <property name="text">
+             <string>--</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="labelLatency">
+            <property name="styleSheet">
+             <string notr="true">QLabel
+{
+    color: #cbd5e1;
+}</string>
+            </property>
+            <property name="text">
+             <string>Latency (ms):</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QLabel" name="lblLatency">
+            <property name="styleSheet">
+             <string notr="true">QLabel
+{
+    color: #cbd5e1;
+}</string>
+            </property>
+            <property name="text">
+             <string>--</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_2">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>25</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="groupBox_2">
+         <property name="title">
+          <string>Privacy Mode</string>
+         </property>
+         <layout class="QHBoxLayout" name="horizontalLayout_7">
+          <item>
+           <widget class="QRadioButton" name="rbNone">
+            <property name="styleSheet">
+             <string notr="true">QRadioButton
+{
+    color: #cbd5e1;
+}
+
+QRadioButton::indicator
+{
+    width:13px;
+    height:13px;
+}
+
+QRadioButton::indicator:unchecked
+{
+    border:1px solid #4b5563;
+    border-radius:7px;
+    background:#1e2126;
+}
+
+QRadioButton::indicator:checked
+{
+    border:1px solid #38bdf8;
+    border-radius:7px;
+    background:#38bdf8;
+}</string>
+            </property>
+            <property name="text">
+             <string>None</string>
+            </property>
+            <property name="checked">
+             <bool>true</bool>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rbGray">
+            <property name="styleSheet">
+             <string notr="true">QRadioButton
+{
+    color: #cbd5e1;
+}
+
+QRadioButton::indicator
+{
+    width:13px;
+    height:13px;
+}
+
+QRadioButton::indicator:unchecked
+{
+    border:1px solid #4b5563;
+    border-radius:7px;
+    background:#1e2126;
+}
+
+QRadioButton::indicator:checked
+{
+    border:1px solid #38bdf8;
+    border-radius:7px;
+    background:#38bdf8;
+}</string>
+            </property>
+            <property name="text">
+             <string>Gray</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rbBlur">
+            <property name="styleSheet">
+             <string notr="true">QRadioButton
+{
+    color: #cbd5e1;
+}
+
+QRadioButton::indicator
+{
+    width:13px;
+    height:13px;
+}
+
+QRadioButton::indicator:unchecked
+{
+    border:1px solid #4b5563;
+    border-radius:7px;
+    background:#1e2126;
+}
+
+QRadioButton::indicator:checked
+{
+    border:1px solid #38bdf8;
+    border-radius:7px;
+    background:#38bdf8;
+}</string>
+            </property>
+            <property name="text">
+             <string>Blur</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="rbEdge">
+            <property name="styleSheet">
+             <string notr="true">QRadioButton
+{
+    color: #cbd5e1;
+}
+
+QRadioButton::indicator
+{
+    width:13px;
+    height:13px;
+}
+
+QRadioButton::indicator:unchecked
+{
+    border:1px solid #4b5563;
+    border-radius:7px;
+    background:#1e2126;
+}
+
+QRadioButton::indicator:checked
+{
+    border:1px solid #38bdf8;
+    border-radius:7px;
+    background:#38bdf8;
+}</string>
+            </property>
+            <property name="text">
+             <string>Egde</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_3">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>25</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="startVideoButton">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+    background: #1e2126;
+    color: #38bdf8; /* Accent Blue text */
+    border: 1px solid #38bdf8;
+    border-radius: 4px;
+    padding: 5px 14px;
+    font-weight: bold;
+}
+QPushButton:hover {
+    background: #38bdf8;
+    color: #111417;
+}
+QPushButton:pressed {
+    background: #0ea5e9;
+}</string>
+         </property>
+         <property name="text">
+          <string>Start Video</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="audioGroup">
+      <property name="styleSheet">
+       <string notr="true">QGroupBox
+{
+    color: #4b5563;       /* This sets the title text color to gray */
+    border: 1px solid #2a2d32;  /* Match your dark borders */
+    border-radius: 4px;
+    margin-top: 8px;      /* Shrinks the awkward top spacing */
+    padding: 6px;
+}
+
+QGroupBox::title
+{
+    subcontrol-origin: margin;
+    left: 8px;            /* Aligns text beautifully to the top left */
+}</string>
       </property>
       <property name="title">
-       <string>STATS</string>
+       <string>Audio</string>
       </property>
       <property name="alignment">
        <set>Qt::AlignmentFlag::AlignLeading|Qt::AlignmentFlag::AlignLeft|Qt::AlignmentFlag::AlignTop</set>
       </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_3">
-       <property name="spacing">
-        <number>20</number>
-       </property>
-       <property name="leftMargin">
-        <number>8</number>
-       </property>
-       <property name="topMargin">
-        <number>8</number>
-       </property>
-       <property name="rightMargin">
-        <number>8</number>
-       </property>
-       <property name="bottomMargin">
-        <number>8</number>
-       </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
-        <widget class="QLabel" name="labelDisplay">
+        <widget class="QGroupBox" name="audioDeviceGroup">
          <property name="styleSheet">
-          <string notr="true">QLabel
-{
+          <string notr="true">QLabel {
     color: #cbd5e1;
 }</string>
          </property>
-         <property name="text">
-          <string>Display FPS:</string>
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QGridLayout" name="gridLayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelAudioInputDevice">
+            <property name="text">
+             <string>Input:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLabel" name="lblAudioInputDevice">
+            <property name="text">
+             <string>No Device</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelAudioOutputDevice">
+            <property name="text">
+             <string>Output:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="lblAudioOutputDevice">
+            <property name="text">
+             <string>No Device</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_4">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>57</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QSlider" name="sliderAudioGain">
+         <property name="styleSheet">
+          <string notr="true">QSlider::groove:horizontal {
+    border: 1px solid #2a2d32;
+    height: 6px;
+    background: #1e2126;
+    border-radius: 3px;
+}
+QSlider::sub-page:horizontal {
+    background: #38bdf8; /* Colored volume bar up to the handle */
+    border-radius: 3px;
+}
+QSlider::handle:horizontal {
+    background: #cbd5e1;
+    border: 1px solid #2a2d32;
+    width: 14px;
+    margin-top: -4px;
+    margin-bottom: -4px;
+    border-radius: 7px;
+}
+QSlider::handle:horizontal:hover {
+    background: #ffffff;
+    border-color: #38bdf8;
+}</string>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="lblDisplayFps">
+        <widget class="QLabel" name="labelGain">
          <property name="styleSheet">
-          <string notr="true">QLabel
-{
+          <string notr="true">QLabel {
+    color: #cbd5e1;
+}</string>
+         </property>
+         <property name="text">
+          <string>Gain:</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLabel" name="lblSliderAudioGain">
+         <property name="styleSheet">
+          <string notr="true">QLabel {
     color: #cbd5e1;
 }</string>
          </property>
@@ -141,132 +570,134 @@ QGroupBox::title
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="labelCapture">
+        <spacer name="horizontalSpacer_5">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>57</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="audioMeterGroup">
          <property name="styleSheet">
-          <string notr="true">QLabel
-{
+          <string notr="true">QLabel {
     color: #cbd5e1;
 }</string>
          </property>
+         <property name="title">
+          <string/>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="0">
+           <widget class="QLabel" name="labelAudioMeterLeft">
+            <property name="text">
+             <string>L:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QProgressBar" name="audioLevelLeft">
+            <property name="styleSheet">
+             <string notr="true"/>
+            </property>
+            <property name="value">
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="labelAudioMeterRight">
+            <property name="text">
+             <string>R:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QProgressBar" name="audioLevelRight">
+            <property name="value">
+             <number>0</number>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <spacer name="horizontalSpacer_6">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>95</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item>
+        <widget class="QPushButton" name="audioStartStopButton">
+         <property name="styleSheet">
+          <string notr="true">QPushButton {
+    background: #1e2126;
+    color: #cbd5e1;
+    border: 1px solid #2a2d32;
+    border-radius: 4px;
+    padding: 5px 14px;
+}
+QPushButton:hover {
+    background: #2a2d32;
+    border-color: #38bdf8;
+    color: #38bdf8;
+}
+QPushButton:pressed {
+    background: #0f1115;
+}</string>
+         </property>
          <property name="text">
-          <string>Capture FPS:</string>
+          <string>Start</string>
          </property>
         </widget>
        </item>
        <item>
-        <widget class="QLabel" name="lblCaptureFps">
-         <property name="styleSheet">
-          <string notr="true">QLabel
-{
-    color: #cbd5e1;
-}</string>
+        <spacer name="horizontalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Orientation::Horizontal</enum>
          </property>
-         <property name="text">
-          <string>--</string>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>57</width>
+           <height>20</height>
+          </size>
          </property>
-        </widget>
+        </spacer>
        </item>
        <item>
-        <widget class="QLabel" name="labelLatency">
+        <widget class="QPushButton" name="muteButton">
          <property name="styleSheet">
-          <string notr="true">QLabel
-{
+          <string notr="true">QPushButton {
+    background: #1e2126;
     color: #cbd5e1;
+    border: 1px solid #2a2d32;
+    border-radius: 4px;
+    padding: 5px 14px;
+}
+QPushButton:hover {
+    background: #2a2d32;
+    border-color: #38bdf8;
+    color: #38bdf8;
+}
+QPushButton:pressed {
+    background: #0f1115;
 }</string>
          </property>
          <property name="text">
-          <string>Latency (ms):</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="lblLatency">
-         <property name="styleSheet">
-          <string notr="true">QLabel
-{
-    color: #cbd5e1;
-}</string>
-         </property>
-         <property name="text">
-          <string>--</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="labelQueue">
-         <property name="styleSheet">
-          <string notr="true">QLabel
-{
-    color: #cbd5e1;
-}</string>
-         </property>
-         <property name="text">
-          <string>Queue Depth:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="lblQueueDepth">
-         <property name="styleSheet">
-          <string notr="true">QLabel
-{
-    color: #cbd5e1;
-}</string>
-         </property>
-         <property name="text">
-          <string>--</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="labelRaw">
-         <property name="styleSheet">
-          <string notr="true">QLabel
-{
-    color: #cbd5e1;
-}</string>
-         </property>
-         <property name="text">
-          <string>Raw Drops:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="lblRawDrops">
-         <property name="styleSheet">
-          <string notr="true">QLabel
-{
-    color: #cbd5e1;
-}</string>
-         </property>
-         <property name="text">
-          <string>--</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="labelProc">
-         <property name="styleSheet">
-          <string notr="true">QLabel
-{
-    color: #cbd5e1;
-}</string>
-         </property>
-         <property name="text">
-          <string>Proc Drops:</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="lblProcDrops">
-         <property name="styleSheet">
-          <string notr="true">QLabel
-{
-    color: #cbd5e1;
-}</string>
-         </property>
-         <property name="text">
-          <string>--</string>
+          <string>Mute</string>
          </property>
         </widget>
        </item>
@@ -275,172 +706,6 @@ QGroupBox::title
     </item>
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
-      <item>
-       <widget class="QGroupBox" name="filterGroup">
-        <property name="minimumSize">
-         <size>
-          <width>350</width>
-          <height>0</height>
-         </size>
-        </property>
-        <property name="styleSheet">
-         <string notr="true">QGroupBox
-{
-    color: #4b5563;
-    border: 1px solid #2a2d32;
-    border-radius: 4px;
-    margin-top: 8px;
-    padding: 6px;
-}
-
-QGroupBox::title
-{
-    subcontrol-origin: margin;
-    left: 8px;
-}</string>
-        </property>
-        <property name="title">
-         <string>FILTER</string>
-        </property>
-        <layout class="QHBoxLayout" name="horizontalLayout_2">
-         <item>
-          <widget class="QRadioButton" name="rbNone">
-           <property name="styleSheet">
-            <string notr="true">QRadioButton
-{
-    color: #cbd5e1;
-}
-
-QRadioButton::indicator
-{
-    width:13px;
-    height:13px;
-}
-
-QRadioButton::indicator:unchecked
-{
-    border:1px solid #4b5563;
-    border-radius:7px;
-    background:#1e2126;
-}
-
-QRadioButton::indicator:checked
-{
-    border:1px solid #38bdf8;
-    border-radius:7px;
-    background:#38bdf8;
-}</string>
-           </property>
-           <property name="text">
-            <string>None</string>
-           </property>
-           <property name="checked">
-            <bool>true</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="rbGray">
-           <property name="styleSheet">
-            <string notr="true">QRadioButton
-{
-    color: #cbd5e1;
-}
-
-QRadioButton::indicator
-{
-    width:13px;
-    height:13px;
-}
-
-QRadioButton::indicator:unchecked
-{
-    border:1px solid #4b5563;
-    border-radius:7px;
-    background:#1e2126;
-}
-
-QRadioButton::indicator:checked
-{
-    border:1px solid #38bdf8;
-    border-radius:7px;
-    background:#38bdf8;
-}</string>
-           </property>
-           <property name="text">
-            <string>Gray</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="rbBlur">
-           <property name="styleSheet">
-            <string notr="true">QRadioButton
-{
-    color: #cbd5e1;
-}
-
-QRadioButton::indicator
-{
-    width:13px;
-    height:13px;
-}
-
-QRadioButton::indicator:unchecked
-{
-    border:1px solid #4b5563;
-    border-radius:7px;
-    background:#1e2126;
-}
-
-QRadioButton::indicator:checked
-{
-    border:1px solid #38bdf8;
-    border-radius:7px;
-    background:#38bdf8;
-}</string>
-           </property>
-           <property name="text">
-            <string>Blur</string>
-           </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QRadioButton" name="rbEdge">
-           <property name="styleSheet">
-            <string notr="true">QRadioButton
-{
-    color: #cbd5e1;
-}
-
-QRadioButton::indicator
-{
-    width:13px;
-    height:13px;
-}
-
-QRadioButton::indicator:unchecked
-{
-    border:1px solid #4b5563;
-    border-radius:7px;
-    background:#1e2126;
-}
-
-QRadioButton::indicator:checked
-{
-    border:1px solid #38bdf8;
-    border-radius:7px;
-    background:#38bdf8;
-}</string>
-           </property>
-           <property name="text">
-            <string>Egde</string>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </item>
       <item>
        <spacer name="horizontalSpacer">
         <property name="orientation">
