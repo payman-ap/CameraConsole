@@ -402,7 +402,7 @@ QRadioButton::indicator:checked
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="startVideoButton">
+        <widget class="QPushButton" name="btnVideoStart">
          <property name="styleSheet">
           <string notr="true">QPushButton {
     background: #1e2126;
@@ -641,7 +641,7 @@ QSlider::handle:horizontal:hover {
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="audioStartStopButton">
+        <widget class="QPushButton" name="btnAudioStart">
          <property name="styleSheet">
           <string notr="true">QPushButton {
     background: #1e2126;
@@ -678,7 +678,7 @@ QPushButton:pressed {
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="muteButton">
+        <widget class="QPushButton" name="btnMute">
          <property name="styleSheet">
           <string notr="true">QPushButton {
     background: #1e2126;

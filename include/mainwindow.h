@@ -62,6 +62,10 @@ private slots:
     void onPollFrame();
     void onFilterChanged(int id);
     void onResetStats();
+    void onVideoStartStop();
+    void onAudioStartStop();
+    void onAudioMute();
+    void onAudioGainChanged(int value);
 };
 
 

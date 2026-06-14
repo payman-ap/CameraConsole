@@ -72,6 +72,34 @@ void MainWindow::setupButtons()
         this,
         &MainWindow::onResetStats
         );
+
+    connect(
+        ui->btnVideoStart,
+        &QPushButton::clicked,
+        this,
+        &MainWindow::onVideoStartStop
+        );
+
+    connect(
+        ui->btnAudioStart,
+        &QPushButton::clicked,
+        this,
+        &MainWindow::onAudioStartStop
+        );
+
+    connect(
+        ui->btnMute,
+        &QPushButton::clicked,
+        this,
+        &MainWindow::onAudioMute
+        );
+
+    connect(
+        ui->sliderAudioGain,
+        &QSlider::valueChanged,
+        this,
+        &MainWindow::onAudioGainChanged
+        );
 }
 void MainWindow::setupTimer()
 {
@@ -135,6 +163,14 @@ void MainWindow::startPipeline()
     poll_timer_->start(16); // giving roughly 60 GUI updates per second. 1000 / 60 ≈ 16 ms
 
     state_.control.pipeline_ready = true;
+
+    // Set labels
+    ui->lblVideoDeviceName->setText(
+        QString::fromStdString(cap_.getBackendName())
+        );
+    ui->lblAudioInputDevice->setText("No Input");
+    ui->lblAudioOutputDevice->setText("No Output");
+
     std::cout << "Pipeline started\n" << std::endl;
 
 }
@@ -196,21 +232,6 @@ void MainWindow::onPollFrame()
         QString::number(latency_ms)
     );
 
-    // Queue depth
-    state_.current_queue_depth = state_.processed_frame_queue.size();
-    ui->lblQueueDepth->setText(
-        QString::number(state_.current_queue_depth.load())
-    );
-
-    // Raw Drop counter
-    uint64_t raw_drops  = state_.raw_frame_queue .dropped_frames() - raw_drop_baseline_;
-    ui->lblRawDrops->setText(QString::number(raw_drops));
-
-    // Proc Drop counter
-    uint64_t proc_drops = state_.processed_frame_queue.dropped_frames() - proc_drop_baseline_;
-    ui->lblProcDrops->setText(QString::number(proc_drops));
-
-
 
     // Render frame
     if(packet.image.empty()){
@@ -219,6 +240,25 @@ void MainWindow::onPollFrame()
     QPixmap pix = matToPixmap(packet.image); // convert
     QPixmap scaled_pix = pix.scaled(ui->feedLabel->size(), Qt::KeepAspectRatio, Qt::SmoothTransformation); // scale to qt
     ui->feedLabel->setPixmap(scaled_pix); // display in the label
+
+
+    // Test audio meter fake
+    static int level = 0;
+    static bool up = true;
+    if(up)
+    {
+        level += 2;
+        if(level >= 100)
+            up = false;
+    }
+    else
+    {
+        level -= 2;
+        if(level <= 0)
+            up = true;
+    }
+    ui->audioLevelLeft->setValue(level);
+    ui->audioLevelRight->setValue(100 - level);
 }
 
 
@@ -254,6 +294,56 @@ void MainWindow::onResetStats()
     display_frame_count_ = 0;
     display_last_time_ = std::chrono::steady_clock::now();
 }
+
+void MainWindow::onVideoStartStop()
+{
+    qDebug() << "Video Start/Stop pressed";
+
+    if(ui->btnVideoStart->text() == "Start Video")
+    {
+        ui->btnVideoStart->setText("Stop Video");
+    }
+    else
+    {
+        ui->btnVideoStart->setText("Start Video");
+    }
+}
+
+void MainWindow::onAudioStartStop()
+{
+    qDebug() << "Audio Start/Stop pressed";
+
+    if(ui->btnAudioStart->text() == "Start")
+    {
+        ui->btnAudioStart->setText("Stop");
+    }
+    else
+    {
+        ui->btnAudioStart->setText("Start");
+    }
+}
+
+void MainWindow::onAudioMute()
+{
+    qDebug() << "Mute pressed";
+
+    if(ui->btnMute->text() == "Mute")
+    {
+        ui->btnMute->setText("Unmute");
+    }
+    else
+    {
+        ui->btnMute->setText("Mute");
+    }
+}
+
+void MainWindow::onAudioGainChanged(int value)
+{
+    ui->lblSliderAudioGain->setText(QString::number(value));
+    qDebug() << "Audio Gain =" << value;
+}
+
+
 
 
 
