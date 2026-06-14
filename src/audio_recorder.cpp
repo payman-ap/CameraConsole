@@ -21,6 +21,9 @@ AudioRecorder::~AudioRecorder() {
 }
 
 bool AudioRecorder::initialize() {
+    if (handle_) {
+        return true;
+    }
 
     int err = snd_pcm_open(
         &handle_,

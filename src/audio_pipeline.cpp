@@ -4,7 +4,7 @@
 
 AudioPipeline::AudioPipeline() :
     recorder_("plughw:CARD=Audio,DEV=0", sample_rate_, channels_, frames_per_buffer_),
-    player_("default", sample_rate_, channels_, frames_per_buffer_)
+    player_("plughw:CARD=Device,DEV=0", sample_rate_, channels_, frames_per_buffer_)
 {
     //
 }
@@ -29,10 +29,17 @@ bool AudioPipeline::start()
         return false;
     }
 
+    qDebug() << "Initializing player...";
+    if(!player_.initialize())
+    {
+        qDebug() << "Player initialization failed.";
+        return false;
+    }
+
     capture_thread_ = std::make_unique<CaptureThread>(recorder_, ring_, channels_);
     capture_thread_->start();
 
-    playback_thread_ = std::make_unique<PlaybackThread>(player_, ring_, channels_);
+    playback_thread_ = std::make_unique<PlaybackThread>(player_, ring_, channels_, control_);
     playback_thread_->start();
 
     control_.running = true;

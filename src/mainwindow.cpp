@@ -44,6 +44,7 @@ MainWindow::MainWindow(QWidget *parent)
     display_last_time_ = std::chrono::steady_clock::now();
 
     startVideoPipeline();
+    startAudioPipeline();
 }
 
 void MainWindow::setupUI()
@@ -195,12 +196,16 @@ void MainWindow::stopVideoPipeline()
 
 void MainWindow::startAudioPipeline()
 {
-
+    ui->lblAudioInputDevice->setText("Baseus Mic (plughw:CARD=Audio)");
+    ui->lblAudioOutputDevice->setText("USB Speaker (plughw:CARD=Device)");
 }
 
 void MainWindow::stopAudioPipeline()
 {
-    //
+    if (audio_pipeline_.control().running)
+    {
+        audio_pipeline_.stop();
+    }
 }
 
 void MainWindow::onPollFrame()
@@ -441,6 +446,6 @@ void MainWindow::onAudioGainChanged(int value)
 MainWindow::~MainWindow()
 {
     stopVideoPipeline();
-    stopAudioPipeline();
+    stopAudioPipeline(); // ?
     delete ui;
 }

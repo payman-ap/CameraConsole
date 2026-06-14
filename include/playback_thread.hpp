@@ -14,16 +14,20 @@
 
 static constexpr std::size_t PLAYBACK_RING_CAP = 64;
 
+struct AudioControl;
+
 class PlaybackThread {
 public:
     PlaybackThread(
         AudioPlayer& player,
         RingBuffer<std::vector<int16_t>, PLAYBACK_RING_CAP>& ring,
-        int channels
+        int channels,
+        AudioControl& control
     )
         : player_(player),
           ring_(ring),
           channels_(channels),
+          control_(control),
           stop_(false),
           ring_waits_(0),
           max_consecutive_waits_(0),
@@ -95,9 +99,24 @@ private:
             }
 
             consecutive_waits = 0;  // reset streak — capture is keeping up
-            const std::vector<int16_t>& chunk = *maybe;
+            std::vector<int16_t> chunk = std::move(*maybe);
             const int chunk_frames = static_cast<int>(chunk.size()) / channels_;
 
+            // Apply gain and mute
+            if (control_.muted.load(std::memory_order_relaxed)) {
+                std::fill(chunk.begin(), chunk.end(), 0);
+            } else {
+                int gain = control_.gain_percent.load(std::memory_order_relaxed);
+                if (gain != 100) {
+                    float factor = gain / 100.0f;
+                    for (auto& sample : chunk) {
+                        float scaled = sample * factor;
+                        if (scaled > 32767.0f) scaled = 32767.0f;
+                        else if (scaled < -32768.0f) scaled = -32768.0f;
+                        sample = static_cast<int16_t>(scaled);
+                    }
+                }
+            }
 
             // playFrames returns false on EPIPE — that is a real ALSA underrun.
             if (!player_.playFrames(chunk, chunk_frames)) {
@@ -112,6 +131,7 @@ private:
     RingBuffer<std::vector<int16_t>, PLAYBACK_RING_CAP>&  ring_;
     int                                                    channels_;
     int                                                    total_frames_;
+    AudioControl&                                          control_;
 
     std::atomic<bool>  stop_;
     std::atomic<int>   ring_waits_;          // total ring-empty sleeps

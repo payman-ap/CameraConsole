@@ -23,6 +23,9 @@ AudioPlayer::~AudioPlayer() {
 }
 
 bool AudioPlayer::initialize() {
+    if (handle_) {
+        return true;
+    }
 
     int err = snd_pcm_open(
         &handle_,

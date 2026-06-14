@@ -4,20 +4,18 @@
 #include <atomic>
 #include <thread>
 
-#include "audio_recorder.hpp"
-#include "audio_player.hpp"
-#include "capture_thread.hpp"
-#include "playback_thread.hpp"
-#include "ring_buffer.hpp"
-
-
-
 struct AudioControl
 {
     std::atomic<bool> running{false};
     std::atomic<bool> muted{false};
     std::atomic<int> gain_percent{50};
 };
+
+#include "audio_recorder.hpp"
+#include "audio_player.hpp"
+#include "capture_thread.hpp"
+#include "playback_thread.hpp"
+#include "ring_buffer.hpp"
 
 
 class AudioPipeline
