@@ -68,7 +68,7 @@ void processing_thread(SharedState& state)
             break;
 
         case FilterType::blur:
-            cv::GaussianBlur(packet.image, frame_processed, cv::Size(15,15), 0);
+            cv::GaussianBlur(packet.image, frame_processed, cv::Size(31,31), 0);
             break;
 
         case FilterType::edge:

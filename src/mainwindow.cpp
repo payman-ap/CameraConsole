@@ -297,43 +297,116 @@ void MainWindow::onResetStats()
 
 void MainWindow::onVideoStartStop()
 {
-    qDebug() << "Video Start/Stop pressed";
+    video_running_ = !video_running_;
 
-    if(ui->btnVideoStart->text() == "Start Video")
+    if(video_running_)
     {
         ui->btnVideoStart->setText("Stop Video");
+        ui->btnVideoStart->setStyleSheet(
+            "QPushButton {"
+            "background:#38bdf8;"
+            "color:#111417;"
+            "border:1px solid #38bdf8;"
+            "border-radius:4px;"
+            "padding:5px 14px;"
+            "font-weight:bold;"
+            "}"
+            "QPushButton:hover {"
+            "background:#7dd3fc;"
+            "}"
+            "QPushButton:pressed {"
+            "background:#0ea5e9;"
+            "}"
+            );
+        qDebug() << "Video started";
     }
     else
     {
         ui->btnVideoStart->setText("Start Video");
+        ui->btnVideoStart->setStyleSheet(
+            "QPushButton {"
+            "background:#1e2126;"
+            "color:#38bdf8;"
+            "border:1px solid #38bdf8;"
+            "border-radius:4px;"
+            "padding:5px 14px;"
+            "font-weight:bold;"
+            "}"
+            "QPushButton:hover {"
+            "background:#38bdf8;"
+            "color:#111417;"
+            "}"
+            "QPushButton:pressed {"
+            "background:#0ea5e9;"
+            "}"
+            );
+        qDebug() << "Video stopped";
     }
 }
 
 void MainWindow::onAudioStartStop()
 {
-    qDebug() << "Audio Start/Stop pressed";
+    audio_running_ = !audio_running_;
 
-    if(ui->btnAudioStart->text() == "Start")
+    if(audio_running_)
     {
         ui->btnAudioStart->setText("Stop");
+        ui->btnAudioStart->setStyleSheet(
+            "QPushButton{"
+            "background:#f59e0b;"
+            "color:#111417;"
+            "border:1px solid #f59e0b;"
+            "border-radius:4px;"
+            "font-weight:bold;"
+            "}"
+            );
+        qDebug() << "Audio started";
     }
     else
     {
         ui->btnAudioStart->setText("Start");
+        ui->btnAudioStart->setStyleSheet(
+            "QPushButton{"
+            "background:#1e2126;"
+            "color:#22c55e;"
+            "border:1px solid #22c55e;"
+            "border-radius:4px;"
+            "font-weight:bold;"
+            "}"
+            );
+        qDebug() << "Audio stopped";
     }
 }
 
 void MainWindow::onAudioMute()
 {
-    qDebug() << "Mute pressed";
+    audio_muted_ = !audio_muted_;
 
-    if(ui->btnMute->text() == "Mute")
+    if(audio_muted_)
     {
         ui->btnMute->setText("Unmute");
+        ui->btnMute->setStyleSheet(
+            "QPushButton{"
+            "background:#64748b;"
+            "color:white;"
+            "border:1px solid #64748b;"
+            "border-radius:4px;"
+            "}"
+            );
+        qDebug() << "Audio muted";
     }
     else
     {
         ui->btnMute->setText("Mute");
+        ui->btnMute->setStyleSheet(
+            "QPushButton{"
+            "background:#1e2126;"
+            "color:#cbd5e1;"
+            "border:1px solid #2a2d32;"
+            "border-radius:4px;"
+            "}"
+            );
+        qDebug() << "Audio unmuted";
     }
 }
 

@@ -56,6 +56,14 @@ private:
     uint64_t raw_drop_baseline_{0};
     uint64_t proc_drop_baseline_{0};
 
+    // ── Stats shared for UI buttons and etc . ───
+    bool video_running_ = true;
+    bool audio_running_ = false;
+    bool audio_muted_ = false;
+
+    // ── Privacy flag
+    bool privacy_mode_ = false;
+
     Ui::MainWindow *ui;
 
 private slots:
