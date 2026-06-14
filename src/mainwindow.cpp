@@ -43,7 +43,7 @@ MainWindow::MainWindow(QWidget *parent)
 
     display_last_time_ = std::chrono::steady_clock::now();
 
-    startPipeline();
+    startVideoPipeline();
 }
 
 void MainWindow::setupUI()
@@ -126,7 +126,7 @@ void MainWindow::setupStats()
 
 }
 
-void MainWindow::startPipeline()
+void MainWindow::startVideoPipeline()
 {
     // --- Camera init -----------------------
     constexpr int deviceID = 1;
@@ -175,7 +175,7 @@ void MainWindow::startPipeline()
 
 }
 
-void MainWindow::stopPipeline()
+void MainWindow::stopVideoPipeline()
 {
     if(poll_timer_) poll_timer_->stop();
     state_.control.running = false;
@@ -193,6 +193,15 @@ void MainWindow::stopPipeline()
 
 }
 
+void MainWindow::startAudioPipeline()
+{
+
+}
+
+void MainWindow::stopAudioPipeline()
+{
+    //
+}
 
 void MainWindow::onPollFrame()
 {
@@ -346,24 +355,29 @@ void MainWindow::onVideoStartStop()
 
 void MainWindow::onAudioStartStop()
 {
-    audio_running_ = !audio_running_;
+    auto& control = audio_pipeline_.control();
 
-    if(audio_running_)
+    if(!control.running)
     {
-        ui->btnAudioStart->setText("Stop");
-        ui->btnAudioStart->setStyleSheet(
-            "QPushButton{"
-            "background:#f59e0b;"
-            "color:#111417;"
-            "border:1px solid #f59e0b;"
-            "border-radius:4px;"
-            "font-weight:bold;"
-            "}"
-            );
-        qDebug() << "Audio started";
+        if(audio_pipeline_.start())
+        {
+            ui->btnAudioStart->setText("Stop");
+            ui->btnAudioStart->setStyleSheet(
+                "QPushButton{"
+                "background:#f59e0b;"
+                "color:#111417;"
+                "border:1px solid #f59e0b;"
+                "border-radius:4px;"
+                "font-weight:bold;"
+                "}"
+                );
+            qDebug() << "Audio pipeline started";
+        }
+
     }
     else
     {
+        audio_pipeline_.stop();
         ui->btnAudioStart->setText("Start");
         ui->btnAudioStart->setStyleSheet(
             "QPushButton{"
@@ -374,15 +388,16 @@ void MainWindow::onAudioStartStop()
             "font-weight:bold;"
             "}"
             );
-        qDebug() << "Audio stopped";
+        qDebug() << "Audio pipeline stopped";
     }
 }
 
 void MainWindow::onAudioMute()
 {
-    audio_muted_ = !audio_muted_;
+    auto& control = audio_pipeline_.control();
+    control.muted = !control.muted; // so GUI and pipeline stay synchronized
 
-    if(audio_muted_)
+    if(control.muted)
     {
         ui->btnMute->setText("Unmute");
         ui->btnMute->setStyleSheet(
@@ -412,8 +427,11 @@ void MainWindow::onAudioMute()
 
 void MainWindow::onAudioGainChanged(int value)
 {
-    ui->lblSliderAudioGain->setText(QString::number(value));
-    qDebug() << "Audio Gain =" << value;
+    // ui->lblSliderAudioGain->setText(QString::number(value));
+    audio_pipeline_.control().gain_percent = value;
+    qDebug()
+        << "Gain:"
+        << audio_pipeline_.control().gain_percent.load();
 }
 
 
@@ -422,6 +440,7 @@ void MainWindow::onAudioGainChanged(int value)
 
 MainWindow::~MainWindow()
 {
-    stopPipeline();
+    stopVideoPipeline();
+    stopAudioPipeline();
     delete ui;
 }

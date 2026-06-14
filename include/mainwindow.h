@@ -10,6 +10,7 @@
 
 #include <opencv2/videoio.hpp>
 #include "camera_pipeline.h"
+#include "audio_pipeline.hpp"
 
 #include <QMainWindow>
 
@@ -33,9 +34,12 @@ private:
     void setupTimer();
     void setupFilterGroup();
     void setupStats();
-    void startPipeline();
-    void stopPipeline();
+    void startVideoPipeline();
+    void stopVideoPipeline();
+    void startAudioPipeline();
+    void stopAudioPipeline();
 
+    // Video members
     cv::VideoCapture cap_;
 
     SharedState state_;
@@ -58,13 +62,21 @@ private:
 
     // ── Stats shared for UI buttons and etc . ───
     bool video_running_ = true;
-    bool audio_running_ = false;
-    bool audio_muted_ = false;
+    // bool audio_running_ = false;
+    // bool audio_muted_ = false;
 
     // ── Privacy flag
     bool privacy_mode_ = false;
 
     Ui::MainWindow *ui;
+
+
+    // Audio members
+    AudioPipeline audio_pipeline_;
+
+
+
+    // ── Audio members
 
 private slots:
     void onPollFrame();
