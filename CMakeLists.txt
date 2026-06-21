@@ -31,13 +31,17 @@ qt_add_executable(camera_console
     src/ui/mainwindow_render.cpp
     src/ui/mainwindow_stats.cpp
     src/ui/mainwindow_styles.cpp
+    src/ui/pages/audio_settings_page.cpp
+    src/ui/pages/video_settings_page.cpp
     # Utilities
     src/ui/qt_utils.cpp
     # Backend
     src/video/camera_pipeline.cpp
+    src/video/video_device_manager.cpp
     src/audio/audio_player.cpp
     src/audio/audio_recorder.cpp
     src/audio/audio_pipeline.cpp
+    src/audio/audio_device_manager.cpp
     # Includes for UI
     include/ui/mainwindow.h
     include/video/camera_pipeline.h
@@ -47,10 +51,14 @@ qt_add_executable(camera_console
     include/audio/playback_thread.hpp
     include/audio/ring_buffer.hpp
     include/audio/audio_pipeline.hpp
+    include/audio/audio_device_manager.hpp
+    include/video/video_device_manager.hpp
     include/ui/mainwindow_audio.hpp
     include/ui/mainwindow_video.hpp
     include/ui/mainwindow_styles.hpp
     include/ui/qt_utils.hpp
+    include/ui/pages/audio_settings_page.hpp
+    include/ui/pages/video_settings_page.hpp
     # UI designer
     forms/mainwindow.ui
 )

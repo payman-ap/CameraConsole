@@ -4,6 +4,8 @@
 #include "ui/mainwindow_video.hpp"
 #include "ui/mainwindow_audio.hpp"
 #include "ui/mainwindow_styles.hpp"
+#include "ui/pages/audio_settings_page.hpp"
+#include "ui/pages/video_settings_page.hpp"
 
 
 MainWindow::MainWindow(QWidget *parent)
