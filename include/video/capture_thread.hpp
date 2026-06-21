@@ -14,8 +14,8 @@
 //   ct.join();
 // ---------------------------------------------------------------------------
 
-#include "audio_recorder.hpp"
-#include "ring_buffer.hpp"
+#include "audio/audio_recorder.hpp"
+#include "audio/ring_buffer.hpp"
 
 #include <atomic>
 #include <thread>

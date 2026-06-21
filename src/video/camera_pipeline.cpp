@@ -1,4 +1,4 @@
-#include "camera_pipeline.h"
+#include "video/camera_pipeline.h"
 
 // Definition of the global shared state instance
 SharedState shared_state;

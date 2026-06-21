@@ -13,11 +13,11 @@ struct AudioControl
     std::atomic<int> level_right{0};
 };
 
-#include "audio_recorder.hpp"
-#include "audio_player.hpp"
-#include "capture_thread.hpp"
-#include "playback_thread.hpp"
-#include "ring_buffer.hpp"
+#include "audio/audio_recorder.hpp"
+#include "audio/audio_player.hpp"
+#include "video/capture_thread.hpp"
+#include "audio/playback_thread.hpp"
+#include "audio/ring_buffer.hpp"
 
 
 class AudioPipeline

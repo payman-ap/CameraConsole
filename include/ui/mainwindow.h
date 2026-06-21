@@ -9,8 +9,8 @@
 #include <QButtonGroup>
 
 #include <opencv2/videoio.hpp>
-#include "camera_pipeline.h"
-#include "audio_pipeline.hpp"
+#include "video/camera_pipeline.h"
+#include "audio/audio_pipeline.hpp"
 
 #include <QMainWindow>
 

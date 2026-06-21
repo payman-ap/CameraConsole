@@ -21,20 +21,37 @@ set(CMAKE_AUTOUIC_SEARCH_PATHS
 
 qt_add_executable(camera_console
     WIN32 MACOSX_BUNDLE
+    # Core
     src/main.cpp
-    src/mainwindow.cpp
-    include/mainwindow.h
-    src/camera_pipeline.cpp
-    include/camera_pipeline.h
-    src/audio_player.cpp
-    src/audio_recorder.cpp
-    src/audio_pipeline.cpp
-    include/audio_player.hpp
-    include/audio_recorder.hpp
-    include/capture_thread.hpp
-    include/playback_thread.hpp
-    include/ring_buffer.hpp
-    include/audio_pipeline.hpp
+    # MainWindow core
+    src/ui/mainwindow.cpp
+    # UI modules
+    src/ui/mainwindow_audio.cpp
+    src/ui/mainwindow_video.cpp
+    src/ui/mainwindow_render.cpp
+    src/ui/mainwindow_stats.cpp
+    src/ui/mainwindow_styles.cpp
+    # Utilities
+    src/ui/qt_utils.cpp
+    # Backend
+    src/video/camera_pipeline.cpp
+    src/audio/audio_player.cpp
+    src/audio/audio_recorder.cpp
+    src/audio/audio_pipeline.cpp
+    # Includes for UI
+    include/ui/mainwindow.h
+    include/video/camera_pipeline.h
+    include/audio/audio_player.hpp
+    include/audio/audio_recorder.hpp
+    include/video/capture_thread.hpp
+    include/audio/playback_thread.hpp
+    include/audio/ring_buffer.hpp
+    include/audio/audio_pipeline.hpp
+    include/ui/mainwindow_audio.hpp
+    include/ui/mainwindow_video.hpp
+    include/ui/mainwindow_styles.hpp
+    include/ui/qt_utils.hpp
+    # UI designer
     forms/mainwindow.ui
 )
 
