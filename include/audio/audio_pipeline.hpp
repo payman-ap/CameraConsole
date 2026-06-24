@@ -3,6 +3,9 @@
 
 #include <atomic>
 #include <thread>
+#include <mutex>   // std::mutex
+#include <vector>  // std::vector
+#include <memory>  // std::unique_ptr
 
 struct AudioControl
 {
@@ -32,6 +35,9 @@ public:
 
     AudioControl& control();
 
+    // For visualization
+    std::vector<int16_t> latestSamples();
+
 private:
     static constexpr unsigned int sample_rate_ = 48000;
     static constexpr int channels_ = 1;
@@ -45,6 +51,11 @@ private:
 
     AudioPlayer player_;
     std::unique_ptr<PlaybackThread> playback_thread_;
+
+    // For visulization
+    void updateVisualizationSamples(const std::vector<int16_t>& samples);
+    std::mutex viz_mutex_;
+    std::vector<int16_t> latest_samples_;
 };
 
 

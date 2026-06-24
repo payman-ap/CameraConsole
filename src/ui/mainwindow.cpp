@@ -20,6 +20,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     setupButtons();
 
+    setupAudioSettingsPage();
+
     setupTimer();
 
     setupStats();
@@ -96,6 +98,7 @@ void MainWindow::setupButtons()
     ui->lblSliderAudioGain->setMaximumWidth(150);
     onAudioGainChanged(ui->sliderAudioGain->value());
 }
+
 void MainWindow::setupTimer()
 {
     // --- Create QTimer -----------------------

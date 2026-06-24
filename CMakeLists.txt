@@ -4,9 +4,10 @@ project(camera_console LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets)
+find_package(Qt6 6.5 REQUIRED COMPONENTS Core Widgets PrintSupport)
 find_package(OpenCV REQUIRED)
 find_package(PkgConfig REQUIRED)
+pkg_check_modules(FFTW REQUIRED fftw3)
 pkg_check_modules(ALSA REQUIRED alsa)
 
 qt_standard_project_setup()
@@ -59,6 +60,9 @@ qt_add_executable(camera_console
     include/ui/qt_utils.hpp
     include/ui/pages/audio_settings_page.hpp
     include/ui/pages/video_settings_page.hpp
+    # plotter
+    include/ui/qcustomplot.h
+    src/ui/qcustomplot.cpp
     # UI designer
     forms/mainwindow.ui
 )
@@ -67,6 +71,7 @@ target_include_directories(camera_console PRIVATE
     include
     ${OpenCV_INCLUDE_DIRS}
     ${ALSA_INCLUDE_DIRS}
+    ${FFTW_INCLUDE_DIRS}
     ${CMAKE_CURRENT_BINARY_DIR}
 )
 
@@ -74,8 +79,11 @@ target_link_libraries(camera_console
     PRIVATE
     Qt::Core
     Qt::Widgets
+    Qt6::PrintSupport
     ${OpenCV_LIBS}
     ${ALSA_LIBRARIES}
+    ${FFTW_LIBRARIES}
+    ${FFTW_LINK_LIBRARIES}
 )
 
 install(TARGETS camera_console

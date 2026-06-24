@@ -66,6 +66,11 @@ void MainWindow::onPollFrame()
     QPixmap scaled_pix = QtUtils::scaleToLabel(pix, ui->feedLabel); // scale to qt
     ui->feedLabel->setPixmap(scaled_pix); // display in the label
 
+    updateAudioEnvelope();
+    updateWaveform();
+    // updateSpectrum();
+    updateSpectrogram();
+
 }
 
 

@@ -3,6 +3,7 @@
 
 #include <thread>
 #include <algorithm>
+#include <complex>
 #include <QTimer>
 #include <QPixmap>
 #include <QFont>
@@ -11,6 +12,7 @@
 #include <opencv2/videoio.hpp>
 #include "video/camera_pipeline.h"
 #include "audio/audio_pipeline.hpp"
+#include "ui/qcustomplot.h"
 
 #include <QMainWindow>
 
@@ -38,6 +40,12 @@ private:
     void stopVideoPipeline();
     void startAudioPipeline();
     void stopAudioPipeline();
+    void setupAudioSettingsPage();
+    void setupAudioPlots();
+    void updateAudioEnvelope();
+    void updateWaveform();
+    void updateSpectrum();
+    void updateSpectrogram();
 
     // Video members
     cv::VideoCapture cap_;
@@ -78,6 +86,23 @@ private:
     void updateAudioMeters(int left, int right);
     void resetAudioMeters();
 
+    // ── Audio plots
+    QCustomPlot* envelope_plot_{nullptr};
+    QCustomPlot* spectrum_plot_{nullptr};
+    QCustomPlot* waveform_plot_{nullptr};
+    QVector<double> envelope_x_;
+    QVector<double> envelope_y_;
+    int envelope_index_{0};
+    QCustomPlot* spectrogram_plot_{nullptr};
+    QCPColorMap* spectrogram_map_{nullptr};
+    static constexpr int SPEC_TIME_BINS = 200;
+    static constexpr int SPEC_FREQ_BINS = 128;
+    int spectrogram_column_{0};
+
+    // For FFT calcuation
+    QVector<double> computeSpectrum(
+        const std::vector<int16_t>& samples);
+
 private slots:
     void onPollFrame();
     void onFilterChanged(int id);
@@ -87,13 +112,17 @@ private slots:
     void onAudioMute();
     void onAudioGainChanged(int value);
 
-
     // ================= Audio slots =================
     void onMicDevChanged(const QString &text);
     void onLoopbackChanged(int value);    // 0..100
     void onAecChanged(int value);         // 0..100
     void onNsChanged(int value);          // 0..100
     void onAgcChanged(int value);         // 0..100
+
+    // ================= Page slots =================
+    void showAudioSettingsPage();
+    void showDashboardPage();
+
 };
 
 #endif // MAINWINDOW_H
