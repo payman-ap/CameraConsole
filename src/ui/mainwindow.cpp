@@ -36,6 +36,7 @@ MainWindow::~MainWindow()
 {
     stopVideoPipeline();
     stopAudioPipeline(); // ?
+    cleanupFFT();
     delete ui;
 }
 

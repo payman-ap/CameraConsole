@@ -13,6 +13,7 @@
 #include "video/camera_pipeline.h"
 #include "audio/audio_pipeline.hpp"
 #include "ui/qcustomplot.h"
+#include <fftw3.h>
 
 #include <QMainWindow>
 
@@ -99,9 +100,15 @@ private:
     static constexpr int SPEC_FREQ_BINS = 128;
     int spectrogram_column_{0};
 
-    // For FFT calcuation
+    // For FFT calculation
     QVector<double> computeSpectrum(
         const std::vector<int16_t>& samples);
+    void initFFT(int size);
+    void cleanupFFT();
+    double* fft_in_{nullptr};
+    fftw_complex* fft_out_{nullptr};
+    fftw_plan fft_plan_{nullptr};
+    int fft_size_{0};
 
 private slots:
     void onPollFrame();
