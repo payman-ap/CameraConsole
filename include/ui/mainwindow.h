@@ -43,6 +43,7 @@ private:
     void stopAudioPipeline();
     void setupAudioSettingsPage();
     void setupAudioPlots();
+    void populateAudioDevices();
     void updateAudioEnvelope();
     void updateWaveform();
     void updateSpectrum();

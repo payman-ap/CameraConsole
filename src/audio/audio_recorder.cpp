@@ -126,3 +126,16 @@ bool AudioRecorder::captureFrames(
 
     return true;
 }
+
+void AudioRecorder::setDevice(const std::string& device)
+{
+    if (device_ != device)
+    {
+        device_ = device;
+        if (handle_)
+        {
+            snd_pcm_close(handle_);
+            handle_ = nullptr;
+        }
+    }
+}

@@ -17,6 +17,7 @@ void MainWindow::showDashboardPage()
 void MainWindow::setupAudioSettingsPage()
 {
     setupAudioPlots();
+    populateAudioDevices();
 
     connect(
         ui->btnAudioSettings,
@@ -31,6 +32,58 @@ void MainWindow::setupAudioSettingsPage()
         this,
         &MainWindow::showDashboardPage
         );
+
+    connect(
+        ui->btnApplyAudioDevices,
+        &QPushButton::clicked,
+        this,
+        [this]()
+        {
+            int inIdx  = ui->cbInputDevice->currentIndex();
+            int outIdx = ui->cbOutputDevice->currentIndex();
+
+            if (inIdx < 0 || outIdx < 0) return;
+
+            std::string inName  = ui->cbInputDevice->itemData(inIdx).toString().toStdString();
+            std::string outName = ui->cbOutputDevice->itemData(outIdx).toString().toStdString();
+
+            audio_pipeline_.stop();
+            audio_pipeline_.setInputDevice(inName);
+            audio_pipeline_.setOutputDevice(outName);
+            audio_pipeline_.start();
+
+            QString inDesc  = ui->cbInputDevice->itemText(inIdx);
+            QString outDesc = ui->cbOutputDevice->itemText(outIdx);
+            ui->lblAudioInputDevice->setText(inDesc);
+            ui->lblAudioOutputDevice->setText(outDesc);
+        });
+}
+
+void MainWindow::populateAudioDevices()
+{
+    ui->cbInputDevice->clear();
+    ui->cbOutputDevice->clear();
+
+    auto inputs = AudioDeviceManager::enumerateInputDevices();
+    for (const auto& dev : inputs)
+        ui->cbInputDevice->addItem(
+            QString::fromStdString(dev.description),
+            QString::fromStdString(dev.name));
+
+    auto outputs = AudioDeviceManager::enumerateOutputDevices();
+    for (const auto& dev : outputs)
+        ui->cbOutputDevice->addItem(
+            QString::fromStdString(dev.description),
+            QString::fromStdString(dev.name));
+
+    // Pre-select the device the pipeline is already using
+    int inIdx = ui->cbInputDevice->findData(
+        QString::fromStdString(audio_pipeline_.getInputDevice()));
+    if (inIdx >= 0) ui->cbInputDevice->setCurrentIndex(inIdx);
+
+    int outIdx = ui->cbOutputDevice->findData(
+        QString::fromStdString(audio_pipeline_.getOutputDevice()));
+    if (outIdx >= 0) ui->cbOutputDevice->setCurrentIndex(outIdx);
 }
 
 

@@ -64,7 +64,7 @@ private:
         // ── Pre-fill barrier ─────────────────────────────────────────────────
         // Hold playback until capture has buffered MIN_PREFILL periods.
         // 8 x 512 / 48000 = 85 ms covers capture startup + scheduler jitter.
-        constexpr std::size_t MIN_PREFILL = 8;
+        constexpr std::size_t MIN_PREFILL = 8; // default 8
         while (!stop_.load(std::memory_order_relaxed) &&
                ring_.size() < MIN_PREFILL) {
             std::this_thread::sleep_for(std::chrono::milliseconds(1));

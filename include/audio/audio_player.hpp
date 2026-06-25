@@ -28,6 +28,11 @@ public:
         return sample_rate_;
     }
 
+    void setDevice(const std::string& device);
+    // const std::string& getDevice() const { return device_; }
+
+    std::string getDevice() const { return device_; }
+
 private:
     std::string device_;
 
