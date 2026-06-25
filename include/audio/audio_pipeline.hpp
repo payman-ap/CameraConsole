@@ -3,6 +3,10 @@
 
 #include <atomic>
 #include <thread>
+#include <chrono>
+#include <mutex>   // std::mutex
+#include <vector>  // std::vector
+#include <memory>  // std::unique_ptr
 
 struct AudioControl
 {
@@ -18,6 +22,7 @@ struct AudioControl
 #include "video/capture_thread.hpp"
 #include "audio/playback_thread.hpp"
 #include "audio/ring_buffer.hpp"
+#include "audio/audio_device_manager.hpp"
 
 
 class AudioPipeline
@@ -30,7 +35,15 @@ public:
     bool start();
     void stop();
 
+    void setInputDevice(const std::string& device);
+    void setOutputDevice(const std::string& device);
+    std::string getInputDevice() const;
+    std::string getOutputDevice() const;
+
     AudioControl& control();
+
+    // For visualization
+    std::vector<int16_t> latestSamples();
 
 private:
     static constexpr unsigned int sample_rate_ = 48000;
@@ -45,6 +58,11 @@ private:
 
     AudioPlayer player_;
     std::unique_ptr<PlaybackThread> playback_thread_;
+
+    // For visulization
+    void updateVisualizationSamples(const std::vector<int16_t>& samples);
+    std::mutex viz_mutex_;
+    std::vector<int16_t> latest_samples_;
 };
 
 

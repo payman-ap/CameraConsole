@@ -88,6 +88,10 @@ bool AudioPlayer::initialize() {
         0
     );
 
+    // Temp: Set buffer size to 4× the period to give the hardware more headroom
+    // snd_pcm_uframes_t buffer_size = static_cast<snd_pcm_uframes_t>(frames_per_buffer_ * 4);
+    // snd_pcm_hw_params_set_buffer_size_near(handle_, params, &buffer_size);
+
     err = snd_pcm_hw_params(handle_, params);
 
     if (err < 0) {
@@ -149,3 +153,18 @@ bool AudioPlayer::playFrames(
 
     return true;
 }
+
+void AudioPlayer::setDevice(const std::string& device)
+{
+    if (device_ != device)
+    {
+        device_ = device;
+        if (handle_)
+        {
+            snd_pcm_drain(handle_);
+            snd_pcm_close(handle_);
+            handle_ = nullptr;
+        }
+    }
+}
+

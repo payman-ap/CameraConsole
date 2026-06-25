@@ -104,6 +104,13 @@ public:
         return (w - r) & MASK;
     }
 
+    // Safe to call only when both producer and consumer threads are stopped.
+    void clear()
+    {
+        const std::size_t w = write_idx_.load(std::memory_order_relaxed);
+        read_idx_.store(w, std::memory_order_relaxed);
+    }
+
 private:
     static constexpr std::size_t MASK = CAP - 1;
 

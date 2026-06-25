@@ -21,6 +21,7 @@
 #include <thread>
 #include <vector>
 #include <iostream>
+#include <functional>
 
 // CAP slots: 64 × 512-frame periods @48 kHz ≈ 680 ms of headroom —
 // plenty of slack to absorb scheduling jitter without dropping audio.
@@ -35,13 +36,15 @@ public:
     CaptureThread(
         AudioRecorder& recorder,
         RingBuffer<std::vector<int16_t>, CAPTURE_RING_CAP>& ring,
-        int channels
+        int channels,
+        std::function<void(const std::vector<int16_t>&)> callback = {}
     )
         : recorder_(recorder),
           ring_(ring),
           channels_(channels),
           stop_(false),
-          overruns_(0) {}
+          overruns_(0),
+          sample_callback_(std::move(callback)) {}
 
     // Not copyable / movable — owns a live thread handle.
     CaptureThread(const CaptureThread&)            = delete;
@@ -85,6 +88,12 @@ private:
             // Trim to what was actually captured (handles short reads).
             chunk.resize(static_cast<std::size_t>(frames_captured) * channels_);
 
+
+            if(sample_callback_)
+            {
+                sample_callback_(chunk);
+            }
+
             // Move into the ring; if the ring is full the playback thread is
             // lagging — drop this period and count it.
             if (!ring_.push(chunk)) {
@@ -98,6 +107,8 @@ private:
     AudioRecorder&                                          recorder_;
     RingBuffer<std::vector<int16_t>, CAPTURE_RING_CAP>&    ring_;
     int                                                     channels_;
+    std::function<void(const std::vector<int16_t>&)> sample_callback_;
+
     std::atomic<bool>                                       stop_;
     std::atomic<int>                                        overruns_;
     std::thread                                             thread_;

@@ -4,6 +4,8 @@
 #include "ui/mainwindow_video.hpp"
 #include "ui/mainwindow_audio.hpp"
 #include "ui/mainwindow_styles.hpp"
+#include "ui/pages/audio_settings_page.hpp"
+#include "ui/pages/video_settings_page.hpp"
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -17,6 +19,8 @@ MainWindow::MainWindow(QWidget *parent)
     setupFilterGroup();
 
     setupButtons();
+
+    setupAudioSettingsPage();
 
     setupTimer();
 
@@ -32,6 +36,7 @@ MainWindow::~MainWindow()
 {
     stopVideoPipeline();
     stopAudioPipeline(); // ?
+    cleanupFFT();
     delete ui;
 }
 
@@ -94,6 +99,7 @@ void MainWindow::setupButtons()
     ui->lblSliderAudioGain->setMaximumWidth(150);
     onAudioGainChanged(ui->sliderAudioGain->value());
 }
+
 void MainWindow::setupTimer()
 {
     // --- Create QTimer -----------------------
