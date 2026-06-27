@@ -177,8 +177,7 @@ Replace https://github.com/your-username/alsa-spsc-audio-bridge with your actual
 
 not like this. give the whole markdown syntax in a single codeblock. also: https://github.com/payman-ap/alsa-spsc-audio-bridge
 
-4:03 PM
-markdown
+
 # Multithreaded Camera Console (OpenCV + Qt)
 
 A real-time camera and audio monitoring application built to explore modern C++, concurrent programming, OpenCV, ALSA, and Qt GUI development.
