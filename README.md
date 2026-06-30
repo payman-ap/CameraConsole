@@ -230,6 +230,7 @@ A real-time camera and audio monitoring application built to explore modern C++,
 ## Pipeline Architecture
 
 ### Video Pipeline
+```
 Camera
 │
 ▼
@@ -249,9 +250,11 @@ Qt GUI Timer
 │
 ▼
 Live Display
-
+```
 
 ### Audio Pipeline
+
+```
 ALSA Capture Device
 │
 ▼
@@ -267,7 +270,7 @@ PlaybackThread (consumer)
 ALSA Playback Device
 │
 └──(callback)──▶ AudioPipeline ──▶ Visualization samples ──▶ Qt plots
-
+```
 
 The GUI is intentionally separated from both pipelines. Worker threads handle acquisition and processing, while the Qt event loop is responsible only for presentation and user interaction.
 
@@ -305,6 +308,8 @@ Key properties carried over and extended here:
 ---
 
 ## Project Structure
+
+```
 .
 ├── include/
 │ ├── audio/ # AudioPipeline, AudioRecorder, AudioPlayer,
@@ -318,7 +323,7 @@ Key properties carried over and extended here:
 ├── forms/
 │ └── mainwindow.ui # Qt Designer layout
 └── CMakeLists.txt
-
+```
 
 ---
 
